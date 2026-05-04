@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: meupainel_db
+    env_file: .env
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: meupainel_backend
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - ./dados_clientes:/app/dados_clientes
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: meupainel_frontend
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: meupainel_watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
