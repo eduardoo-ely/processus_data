@@ -1,3 +1,57 @@
+# ==========================================
+# SEGURANÇA (O Cofre da Firma)
+# ==========================================
+.env
+.env.*
+!.env.example
+secret.key
+
+# ==========================================
+# DADOS DOS CLIENTES (A Zona de Quarentena)
+# ==========================================
+dados_clientes/
+*.csv
+*.xlsx
+*.json
+*.sqlite3
+*.db
+
+# ==========================================
+# FRONT-END (Next.js / React)
+# ==========================================
 node_modules/
 .next/
-.env
+out/
+build/
+.pnp
+.pnp.js
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# BACK-END (Python / FastAPI / Pandas)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+dist/
+*.egg-info/
+*.egg
+
+# ==========================================
+# AMBIENTE DE DEV E SISTEMA OPERACIONAL (Fantasmas)
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

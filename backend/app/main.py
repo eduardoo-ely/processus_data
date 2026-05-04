@@ -6,7 +6,7 @@ from app.api.dashboard import router as dashboard_router
 # Cria as tabelas do banco SaaS (Tenants, Users, DataSources)
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SaaS Painel API", version="1.0.0")
+app = FastAPI(title="Processus Data API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,7 +18,9 @@ app.add_middleware(
 )
 
 # Registra as rotas
+from app.api.admin import router as admin_router
 app.include_router(dashboard_router, prefix="/api/v1/dashboard", tags=["Dashboard"])
+app.include_router(admin_router, prefix="/api/v1/admin", tags=["Admin"])
 
 @app.get("/health")
 def health_check():

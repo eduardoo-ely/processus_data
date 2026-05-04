@@ -3,30 +3,32 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
-import { modules } from '@/data/modules'
 import {
   LayoutDashboard,
-  DollarSign,
-  TrendingUp,
+  LineChart,
+  FolderKanban,
+  Users,
+  FileText,
   Settings,
-  BarChart2,
-  Package,
-  ChevronLeft,
+  HelpCircle,
+  MoreVertical,
   ChevronRight,
-  Lock,
-  LogOut,
-  X,
+  ChevronLeft,
+  X
 } from 'lucide-react'
 
-const iconMap: Record<string, React.ElementType> = {
-  LayoutDashboard,
-  DollarSign,
-  TrendingUp,
-  Settings,
-  BarChart2,
-  Package,
-}
+const MAIN_NAV = [
+  { title: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+  { title: 'Analytics', icon: LineChart, href: '/dashboard/analytics' },
+  { title: 'Projects', icon: FolderKanban, href: '/dashboard/projects' },
+  { title: 'Clients', icon: Users, href: '/dashboard/clients' },
+  { title: 'Reports', icon: FileText, href: '/dashboard/reports' },
+]
+
+const BOTTOM_NAV = [
+  { title: 'Settings', icon: Settings, href: '/dashboard/settings' },
+  { title: 'Support', icon: HelpCircle, href: '/dashboard/support' },
+]
 
 interface SidebarProps {
   collapsed: boolean
@@ -43,171 +45,106 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname()
 
-  const activeModules = modules.filter((m) => m.isActive)
-  const lockedModules = modules.filter((m) => !m.isActive)
-
-  const isActive = (moduleId: string) =>
-    pathname === `/dashboard/${moduleId}` || pathname.startsWith(`/dashboard/${moduleId}/`)
-
-  const isDashboardHome = pathname === '/dashboard'
-
   return (
-    <nav
-      className="h-full flex flex-col"
-      role="navigation"
-      aria-label="Navegação principal"
-    >
-      {/* Header */}
-      <div
-        className={`flex items-center h-16 px-4 border-b border-slate-700/50 ${
-          collapsed ? 'justify-center' : 'justify-between'
-        }`}
-      >
+    <nav className="h-full flex flex-col bg-[#111318] text-[#9ca3af] font-sans border-r border-[#1f2937]/50 relative" role="navigation">
+      
+      {/* ── HEADER / LOGO ─────────────────────────────────────────────────── */}
+      <div className={`flex items-center h-[88px] px-6 ${collapsed ? 'justify-center' : 'justify-between'}`}>
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-600/20 border border-blue-500/30 rounded-lg flex items-center justify-center">
-              <LayoutDashboard className="w-4 h-4 text-blue-400" />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 flex flex-col gap-0.5 justify-center">
+              {/* Logo icon representation */}
+              <div className="w-4 h-4 bg-[#00f2fe] rounded-sm rounded-tr-xl"></div>
+              <div className="w-4 h-4 bg-[#38ef7d] rounded-sm rounded-bl-xl ml-3 -mt-1"></div>
             </div>
-            <span className="font-semibold text-white text-sm">Meu Painel</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-white text-lg tracking-tight leading-tight">PROCESSUS</span>
+              <span className="font-semibold text-[#38ef7d] text-[11px] tracking-[0.2em] uppercase leading-none">DATA</span>
+            </div>
           </div>
         )}
-
-        {/* Mobile close button */}
+        
         {mobileOpen ? (
-          <button
-            onClick={onCloseMobile}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors lg:hidden"
-            aria-label="Fechar menu"
-          >
-            <X className="w-4 h-4" />
+          <button onClick={onCloseMobile} className="p-1.5 rounded-lg text-gray-400 hover:text-white lg:hidden">
+            <X className="w-5 h-5" />
           </button>
         ) : (
-          <button
-            onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors hidden lg:flex"
-            aria-label={collapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
-          >
-            {collapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
-            )}
+          <button onClick={onToggleCollapse} className="hidden lg:flex p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors absolute -right-3 top-10 bg-[#111318] border border-[#1f2937] z-10">
+            {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
           </button>
         )}
       </div>
 
-      {/* Nav links */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        {/* Home link */}
-        <div>
-          <Link
-            href="/dashboard"
-            onClick={mobileOpen ? onCloseMobile : undefined}
-            className={`flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-              collapsed ? 'justify-center' : ''
-            } ${
-              isDashboardHome
-                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-            }`}
-            title={collapsed ? 'Início' : undefined}
-          >
-            <LayoutDashboard
-              className={`w-5 h-5 flex-shrink-0 ${!collapsed ? 'mr-3' : ''} ${
-                isDashboardHome ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'
+      {/* ── MAIN NAV ──────────────────────────────────────────────────────── */}
+      <div className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+        {MAIN_NAV.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+          const Icon = item.icon
+          
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={mobileOpen ? onCloseMobile : undefined}
+              className={`flex items-center px-4 py-3 rounded-xl text-[14px] font-medium transition-all duration-300 group relative ${collapsed ? 'justify-center' : ''} ${
+                isActive 
+                  ? 'text-white' 
+                  : 'text-[#9ca3af] hover:text-white hover:bg-[#1f2937]/30'
               }`}
+            >
+              {/* Glow effect background for active item */}
+              {isActive && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#00f2fe]/20 to-transparent border border-[#00f2fe]/30 rounded-xl shadow-[0_0_15px_rgba(0,242,254,0.15)]"></div>
+              )}
+              
+              <Icon className={`w-5 h-5 flex-shrink-0 relative z-10 ${!collapsed ? 'mr-3.5' : ''} ${
+                isActive ? 'text-[#00f2fe]' : 'text-[#6b7280] group-hover:text-[#9ca3af]'
+              }`} />
+              {!collapsed && <span className="relative z-10">{item.title}</span>}
+            </Link>
+          )
+        })}
+      </div>
+
+      {/* ── BOTTOM NAV & PROFILE ───────────────────────────────────────────── */}
+      <div className="px-4 pb-6 space-y-1.5">
+        {BOTTOM_NAV.map((item) => {
+          const Icon = item.icon
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center px-4 py-3 rounded-xl text-[14px] font-medium transition-colors group ${collapsed ? 'justify-center' : ''} text-[#9ca3af] hover:text-white hover:bg-[#1f2937]/30`}
+            >
+              <Icon className={`w-5 h-5 flex-shrink-0 text-[#6b7280] group-hover:text-[#9ca3af] ${!collapsed ? 'mr-3.5' : ''}`} />
+              {!collapsed && <span>{item.title}</span>}
+            </Link>
+          )
+        })}
+
+        {/* Profile Card */}
+        <div className={`mt-6 flex items-center bg-[#181b21] border border-[#1f2937]/50 rounded-2xl p-2.5 transition-all ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          <div className="flex items-center gap-3">
+            <img 
+              src="https://i.pravatar.cc/100?img=11" 
+              alt="Alex T." 
+              className="w-9 h-9 rounded-full object-cover border border-[#1f2937]"
             />
-            {!collapsed && <span className="truncate">Início</span>}
-          </Link>
-        </div>
-
-        {/* Active modules */}
-        <div>
-          {!collapsed && (
-            <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Módulos
-            </p>
-          )}
-          <div className="space-y-1">
-            {activeModules.map((module) => {
-              const Icon = iconMap[module.icon] ?? LayoutDashboard
-              const active = isActive(module.id)
-              return (
-                <Link
-                  key={module.id}
-                  href={`/dashboard/${module.id}`}
-                  onClick={mobileOpen ? onCloseMobile : undefined}
-                  className={`flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                    collapsed ? 'justify-center' : ''
-                  } ${
-                    active
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/20 shadow-sm'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-                  }`}
-                  aria-current={active ? 'page' : undefined}
-                  title={collapsed ? module.title : undefined}
-                >
-                  <Icon
-                    className={`w-5 h-5 flex-shrink-0 ${!collapsed ? 'mr-3' : ''} ${
-                      active ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'
-                    }`}
-                  />
-                  {!collapsed && <span className="truncate">{module.title}</span>}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Locked modules */}
-        {lockedModules.length > 0 && (
-          <div>
             {!collapsed && (
-              <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Em breve
-              </p>
+              <div className="flex flex-col">
+                <span className="text-white text-sm font-semibold">Alex T.</span>
+                <span className="text-[#6b7280] text-xs">Senior Consultant</span>
+              </div>
             )}
-            <div className="space-y-1">
-              {lockedModules.map((module) => (
-                <div
-                  key={module.id}
-                  className={`flex items-center px-3 py-2.5 rounded-xl text-sm font-medium opacity-40 cursor-not-allowed ${
-                    collapsed ? 'justify-center' : ''
-                  }`}
-                  title={collapsed ? `${module.title} (bloqueado)` : undefined}
-                  aria-disabled="true"
-                >
-                  <Lock
-                    className={`w-5 h-5 flex-shrink-0 text-slate-600 ${
-                      !collapsed ? 'mr-3' : ''
-                    }`}
-                  />
-                  {!collapsed && <span className="truncate text-slate-500">{module.title}</span>}
-                </div>
-              ))}
-            </div>
           </div>
-        )}
+          {!collapsed && (
+            <button className="text-[#6b7280] hover:text-white p-1">
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Footer / Logout */}
-      <div className="px-3 pb-4 border-t border-slate-700/50 pt-3">
-        <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
-          className={`w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group ${
-            collapsed ? 'justify-center' : ''
-          }`}
-          aria-label="Sair"
-          title={collapsed ? 'Sair' : undefined}
-        >
-          <LogOut
-            className={`w-5 h-5 flex-shrink-0 text-slate-500 group-hover:text-red-400 ${
-              !collapsed ? 'mr-3' : ''
-            }`}
-          />
-          {!collapsed && <span>Sair</span>}
-        </button>
-      </div>
     </nav>
   )
 }

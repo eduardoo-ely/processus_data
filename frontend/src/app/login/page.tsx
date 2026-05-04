@@ -57,12 +57,12 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-slate-800/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl p-8">
           {/* Logo */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 bg-blue-600/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mb-4">
-              <LayoutDashboard className="w-7 h-7 text-blue-400" />
+          <div className="flex flex-col items-center justify-center mb-8">
+            <div className="w-12 h-12 bg-blue-600/20 border border-blue-500/30 rounded-xl flex items-center justify-center mb-3">
+              <LayoutDashboard className="w-6 h-6 text-blue-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white">Meu Painel</h1>
-            <p className="text-slate-400 text-sm mt-1">Entre para acessar seus dashboards</p>
+            <h1 className="text-2xl font-bold text-white">Processus Data</h1>
+            <p className="text-slate-400 text-sm mt-1">SaaS de Business Intelligence</p>
           </div>
 
           {/* Form */}
